@@ -39,6 +39,17 @@ namespace ClashResolveAI.Core
         // ── Clash matrix ──────────────────────────────────────────────────
         public static readonly List<ClashMatrixEntry> ClashMatrix = new List<ClashMatrixEntry>
         {
+            // ── Same-Discipline Clashes ───────────────────────────────────
+            new ClashMatrixEntry { Source=Discipline.Plumbing,        Target=Discipline.Plumbing,       Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.HVAC,            Target=Discipline.HVAC,           Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.Electrical,      Target=Discipline.Electrical,     Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.GravityDrainage, Target=Discipline.GravityDrainage, Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.FireProtection,  Target=Discipline.FireProtection, Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.MedicalGas,      Target=Discipline.MedicalGas,     Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.CableTray,       Target=Discipline.CableTray,      Check=true, RuleKey="Generic"             },
+            new ClashMatrixEntry { Source=Discipline.Conduit,         Target=Discipline.Conduit,        Check=true, RuleKey="Generic"             },
+
+            // ── Cross-Discipline Clashes ──────────────────────────────────
             new ClashMatrixEntry { Source=Discipline.Plumbing,        Target=Discipline.Structural,     Check=true, RuleKey="Pipe_vs_Beam"        },
             new ClashMatrixEntry { Source=Discipline.HVAC,            Target=Discipline.Structural,     Check=true, RuleKey="Duct_vs_Beam"        },
             new ClashMatrixEntry { Source=Discipline.Electrical,      Target=Discipline.Structural,     Check=true, RuleKey="Generic"             },

@@ -1089,18 +1089,9 @@ namespace ClashResolveAI.ClashEngine
 
         private static string GetRuleKey(Discipline a, Discipline b)
         {
-            bool Is(Discipline x, Discipline y) =>
-                (a == x && b == y) || (a == y && b == x);
-
-            if (Is(Discipline.Plumbing, Discipline.Structural) ||
-                Is(Discipline.GravityDrainage, Discipline.Structural)) return "Pipe_vs_Beam";
-            if (Is(Discipline.HVAC, Discipline.Structural)) return "Duct_vs_Beam";
-            if (Is(Discipline.CableTray, Discipline.Plumbing) ||
-                Is(Discipline.Electrical, Discipline.Plumbing)) return "CableTray_vs_Pipe";
-            if (Is(Discipline.FireProtection, Discipline.Electrical)) return "Sprinkler_vs_Light";
-            if (Is(Discipline.FireProtection, Discipline.Structural)) return "FireMain_vs_Structure";
-            if (Is(Discipline.MedicalGas, Discipline.HVAC)) return "MedGas_vs_HVAC";
-            return "";
+            var entry = ElementCollector.ClashMatrix.FirstOrDefault(m => 
+                (m.Source == a && m.Target == b) || (m.Source == b && m.Target == a));
+            return entry?.RuleKey ?? "Generic";
         }
     }
 }

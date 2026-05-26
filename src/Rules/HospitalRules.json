@@ -1,0 +1,150 @@
+{
+  "name": "HospitalRules",
+  "version": "4.0",
+  "project_type": "Hospital",
+  "rules": {
+    "Pipe_vs_Beam": {
+      "clearance_mm": 75,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "auto",
+      "code_ref": "ASHRAE 90.1 / HTM 08-03",
+      "note": "Hospital structural penetrations require engineer sign-off"
+    },
+    "Duct_vs_Beam": {
+      "clearance_mm": 100,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "auto",
+      "code_ref": "HTM 03-01"
+    },
+    "FireMain_vs_Structure": {
+      "clearance_mm": 150,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "auto",
+      "code_ref": "NFPA 13 / BS 9251"
+    },
+    "MedGas_vs_HVAC": {
+      "clearance_mm": 200,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "HVAC",
+      "code_ref": "HTM 02-01",
+      "note": "Medical gas lines require 200mm minimum separation from HVAC"
+    },
+    "CableTray_vs_Pipe": {
+      "clearance_mm": 75,
+      "priority": "High",
+      "severity": "Hard",
+      "moving": "CableTray"
+    },
+    "Duct_Clearance": {
+      "clearance_mm": 100,
+      "priority": "Medium",
+      "severity": "Soft",
+      "moving": "auto",
+      "note": "Infection control zones require wider duct clearance"
+    },
+    "Pipe_vs_Wall": {
+      "clearance_mm": 0,
+      "priority": "Low",
+      "severity": "Ignore",
+      "ignore": true,
+      "note": "Pipes penetrate walls by design — confirmed by structural"
+    },
+    "Sprinkler_vs_Light": {
+      "clearance_mm": 450,
+      "priority": "High",
+      "severity": "Hard",
+      "ignore": false,
+      "code_ref": "NFPA 13 Section 10.2.7.1",
+      "note": "Hospital sprinklers must clear light fittings by 450mm"
+    },
+    "Generic": {
+      "clearance_mm": 75,
+      "priority": "Medium",
+      "severity": "Hard",
+      "moving": "auto"
+    }
+  },
+  "discipline_pairs": {
+    "GravityDrainage|Structural": {
+      "clearance_mm": 100,
+      "priority": "Critical",
+      "severity": "Critical",
+      "note": "Gravity drainage NEVER rerouted upward — hospital infection risk"
+    },
+    "FireProtection|Structural": {
+      "clearance_mm": 150,
+      "priority": "Critical",
+      "severity": "Critical",
+      "code_ref": "NFPA 13"
+    },
+    "MedicalGas|Structural": {
+      "clearance_mm": 150,
+      "priority": "Critical",
+      "severity": "Critical",
+      "code_ref": "HTM 02-01"
+    },
+    "MedicalGas|HVAC": {
+      "clearance_mm": 200,
+      "priority": "Critical",
+      "severity": "Critical",
+      "code_ref": "HTM 02-01"
+    },
+    "MedicalGas|Electrical": {
+      "clearance_mm": 150,
+      "priority": "Critical",
+      "severity": "Critical",
+      "code_ref": "HTM 02-01"
+    },
+    "HVAC|Structural": {
+      "clearance_mm": 100,
+      "priority": "High",
+      "severity": "Hard"
+    },
+    "Plumbing|HVAC": {
+      "clearance_mm": 75,
+      "priority": "High",
+      "severity": "Hard",
+      "moving": "HVAC"
+    },
+    "CableTray|HVAC": {
+      "clearance_mm": 75,
+      "priority": "Medium",
+      "severity": "Soft",
+      "moving": "CableTray"
+    },
+    "Conduit|HVAC": {
+      "clearance_mm": 50,
+      "priority": "Low",
+      "severity": "Soft",
+      "moving": "Conduit"
+    }
+  },
+  "category_pairs": {
+    "Pipe Curves|Structural Framing": {
+      "clearance_mm": 75,
+      "severity": "Critical"
+    },
+    "Pipe Curves|Structural Columns": {
+      "clearance_mm": 100,
+      "severity": "Critical"
+    },
+    "Ducts|Structural Framing": {
+      "clearance_mm": 100,
+      "severity": "Critical"
+    },
+    "Pipe Curves|Walls": {
+      "clearance_mm": 0,
+      "severity": "Ignore",
+      "ignore": true
+    },
+    "Sprinklers|Ceilings": {
+      "clearance_mm": 0,
+      "severity": "Ignore",
+      "ignore": true
+    }
+  }
+}

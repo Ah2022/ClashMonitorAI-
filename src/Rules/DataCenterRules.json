@@ -1,0 +1,112 @@
+{
+  "name": "DataCenterRules",
+  "version": "4.0",
+  "project_type": "DataCenter",
+  "rules": {
+    "Pipe_vs_Beam": {
+      "clearance_mm": 100,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "auto",
+      "code_ref": "TIA-942 / Uptime Institute Tier III"
+    },
+    "Duct_vs_Beam": {
+      "clearance_mm": 150,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "auto",
+      "code_ref": "ASHRAE TC 9.9"
+    },
+    "FireMain_vs_Structure": {
+      "clearance_mm": 200,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "auto",
+      "code_ref": "NFPA 75 / NFPA 76",
+      "note": "Data center fire suppression (clean agent) — zero compromise"
+    },
+    "CableTray_vs_Pipe": {
+      "clearance_mm": 300,
+      "priority": "Critical",
+      "severity": "Critical",
+      "moving": "Plumbing",
+      "code_ref": "TIA-942 Section 6.7",
+      "note": "Pipes must NEVER route above cable trays in data centers"
+    },
+    "Duct_Clearance": {
+      "clearance_mm": 150,
+      "priority": "High",
+      "severity": "Hard",
+      "moving": "auto",
+      "note": "Hot aisle / cold aisle containment — strict clearances"
+    },
+    "Pipe_vs_Wall": {
+      "clearance_mm": 0,
+      "severity": "Ignore",
+      "ignore": true
+    },
+    "Sprinkler_vs_Light": {
+      "clearance_mm": 0,
+      "severity": "Ignore",
+      "ignore": true,
+      "note": "Data centers use suppression, not sprinklers"
+    },
+    "Generic": {
+      "clearance_mm": 100,
+      "priority": "High",
+      "severity": "Hard",
+      "moving": "auto"
+    }
+  },
+  "discipline_pairs": {
+    "GravityDrainage|Structural": {
+      "clearance_mm": 150,
+      "priority": "Critical",
+      "severity": "Critical",
+      "note": "No drain pipes above server halls — water damage catastrophic"
+    },
+    "Plumbing|CableTray": {
+      "clearance_mm": 300,
+      "priority": "Critical",
+      "severity": "Critical",
+      "code_ref": "TIA-942",
+      "note": "Fluid lines must never cross cable trays"
+    },
+    "GravityDrainage|CableTray": {
+      "clearance_mm": 300,
+      "priority": "Critical",
+      "severity": "Critical",
+      "code_ref": "TIA-942"
+    },
+    "HVAC|Structural": {
+      "clearance_mm": 150,
+      "priority": "High",
+      "severity": "Hard",
+      "note": "CRAC / CRAH clearance zones critical for cooling path"
+    },
+    "Electrical|Structural": {
+      "clearance_mm": 100,
+      "priority": "High",
+      "severity": "Hard"
+    },
+    "Conduit|HVAC": {
+      "clearance_mm": 75,
+      "priority": "Medium",
+      "severity": "Soft"
+    }
+  },
+  "category_pairs": {
+    "Cable Trays|Pipe Curves": {
+      "clearance_mm": 300,
+      "severity": "Critical"
+    },
+    "Ducts|Structural Framing": {
+      "clearance_mm": 150,
+      "severity": "Critical"
+    },
+    "Pipe Curves|Structural Framing": {
+      "clearance_mm": 100,
+      "severity": "Critical"
+    }
+  }
+}

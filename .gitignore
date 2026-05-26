@@ -1,0 +1,20 @@
+# Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider/IntelliJ
+.idea/
+
+# Revit
+*.backup.*
+*.000*.rvt
+*.000*.rfa
+
+# Local temporary files
+.junie/
+deploy_v5.ps1
+*.log

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>ClashResolve AI</Name>
+    <Assembly>ClashResolveAI\ClashResolveAI.dll</Assembly>
+    <AddInId>7F5F0D2D-4B2D-4F59-9A90-2F2D5B0C4E76</AddInId>
+    <FullClassName>ClashResolveAI.App</FullClassName>
+    <VendorId>MEP_TOOLS</VendorId>
+    <VendorDescription>ClashResolve AI v5.1 — MEP Coordination with Linked Model Support</VendorDescription>
+  </AddIn>
+</RevitAddIns>

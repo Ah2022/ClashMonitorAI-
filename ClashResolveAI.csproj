@@ -1,0 +1,116 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>ClashResolveAI</AssemblyName>
+    <RootNamespace>ClashResolveAI</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Configurations>Debug;Release</Configurations>
+    <Version>5.1.0</Version>
+    <Company>BIM Coordination Engineering</Company>
+    <Description>Professional BIM Coordination Engine — Spatial Hash Grid, Geometry Cache, BCF 2.1, SQLite Persistence</Description>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <!-- ── Revit 2024 API references ──────────────────────────────────── -->
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAddinUtility">
+      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAddinUtility.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ── NuGet packages ─────────────────────────────────────────────── -->
+  <ItemGroup>
+    <!-- JSON serialisation (rule sets, metadata, config) -->
+    <PackageReference Include="Newtonsoft.Json"          Version="13.0.3" />
+
+    <!-- SQLite — persistent clash database -->
+    <PackageReference Include="System.Data.SQLite.Core"  Version="1.0.118.0" />
+
+    <!-- Excel report generation — ClosedXML (last .NET 4.5 compatible version) -->
+    <PackageReference Include="ClosedXML"                Version="0.95.4" />
+
+    <!-- Excel legacy support (alternative) -->
+    <PackageReference Include="EPPlus"                   Version="4.5.3.3" />
+
+    <!-- Word report generation -->
+    <PackageReference Include="DocumentFormat.OpenXml"   Version="2.19.0" />
+
+    <!-- OpenAI SDK -->
+    <PackageReference Include="OpenAI"                   Version="1.11.0" />
+
+    <!-- System assemblies for .NET Framework 4.8 compatibility -->
+    <PackageReference Include="System.Net.Http"          Version="4.3.4" />
+    <PackageReference Include="System.IO.Compression"    Version="4.3.0" />
+  </ItemGroup>
+
+  <!-- ── Source files ──────────────────────────────────────────────────
+       NOTE: The .NET SDK (Microsoft.NET.Sdk) automatically includes ALL
+       *.cs files found under the project directory via glob patterns.
+       Listing them explicitly here would create NETSDK1022 duplicates.
+       Leave this block empty — auto-discovery handles everything.
+  ─────────────────────────────────────────────────────────────────── -->
+
+  <!-- ── JSON rule files — copy to output alongside the DLL ─────────── -->
+  <ItemGroup>
+    <None Include="src\Rules\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- ── Resources (icons) ──────────────────────────────────────────── -->
+  <ItemGroup>
+    <Resource Include="Resources\*.png">
+      <Pack>true</Pack>
+    </Resource>
+  </ItemGroup>
+
+  <!-- ── SQLite native interop — System.Data.SQLite.Core handles this automatically ────────── -->
+  <!-- SQLite.Interop.dll is included via NuGet package CopyToOutputDirectory -->
+
+  <!-- ── Post-build: copy to Revit add-ins folder ───────────────────── -->
+  <Target Name="DeployToRevit" AfterTargets="Build" Condition="'$(Configuration)'=='Debug'">
+    <PropertyGroup>
+      <RevitAddinsRoot>$(APPDATA)\Autodesk\Revit\Addins\2024\</RevitAddinsRoot>
+      <PluginFolder>$(RevitAddinsRoot)ClashResolveAI\</PluginFolder>
+    </PropertyGroup>
+    <Message Text="Deploying to Revit 2024 add-ins folder…" Importance="High" />
+    <MakeDir Directories="$(PluginFolder)" />
+    <Copy SourceFiles="@(ReferenceCopyLocalPaths->'$(OutputPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+          DestinationFolder="$(PluginFolder)"
+          SkipUnchangedFiles="true"
+          ContinueOnError="true" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll;$(OutputPath)$(AssemblyName).pdb"
+          DestinationFolder="$(PluginFolder)"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="ClashResolveAI.addin"
+          DestinationFiles="$(RevitAddinsRoot)ClashResolveAI.addin"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(Resource)"
+          DestinationFolder="$(PluginFolder)Resources\"
+          SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <RuleFiles Include="src\Rules\*.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RuleFiles)"
+          DestinationFolder="$(PluginFolder)src\Rules\"
+          SkipUnchangedFiles="true" />
+    <Message Text="Deploy complete → $(PluginFolder)" Importance="High" />
+  </Target>
+
+</Project>

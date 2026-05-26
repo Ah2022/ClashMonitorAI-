@@ -51,7 +51,7 @@ namespace ClashResolveAI.Alert
             int count = clashes.Count;
             string title = $"⚠️ {count} Clashes Detected";
             string cat   = selected.Category?.Name ?? "Element";
-            string body  = $"Selected: {cat} (ID:{selected.Id.Value})";
+            string body  = $"Selected: {cat} (ID:{selected.Id.Value}). See details in Radar panel.";
             
             int crit = clashes.Count(c => c.Severity == ClashSeverity.Critical);
             int hard = clashes.Count(c => c.Severity == ClashSeverity.Hard);
@@ -94,7 +94,19 @@ namespace ClashResolveAI.Alert
             {
                 int count = clashes.Count;
                 string title = $"⚠️ {count} Clashes Detected";
-                string body  = "Real-time coordination active.";
+                
+                string body;
+                if (count == 1)
+                {
+                    var c = clashes.First();
+                    string catA = c.ElementA?.Category?.Name ?? "Element";
+                    string catB = c.ElementB?.Category?.Name ?? "Element";
+                    body = $"{catA} vs {catB} (ID:{c.ElementB?.Id.Value}). Details in Radar panel.";
+                }
+                else
+                {
+                    body = "Real-time coordination active. Details listed in Radar panel.";
+                }
                 
                 int crit = clashes.Count(c => c.Severity == ClashSeverity.Critical);
                 int hard = clashes.Count(c => c.Severity == ClashSeverity.Hard);

@@ -16,6 +16,7 @@ using ClashResolveAI.Core;
 using ClashResolveAI.Engine;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -167,6 +168,10 @@ namespace ClashResolveAI.Dashboard
         private StackPanel _trendsPanel    = null!;
         private DataGrid   _groupGrid      = null!;
         private DataGrid   _clashGrid      = null!;
+        private ICollectionView? _groupView;
+        private ICollectionView? _clashView;
+        private readonly Dictionary<string, string> _groupFilters = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _clashFilters = new Dictionary<string, string>();
 
         public DashboardWindow(List<ClashResult> clashes, List<ClashGroup> groups)
         {
@@ -176,6 +181,16 @@ namespace ClashResolveAI.Dashboard
             Background        = BgMain;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ResizeMode        = ResizeMode.CanResize;
+
+            var headerStyle = new Style(typeof(System.Windows.Controls.Primitives.DataGridColumnHeader));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.BackgroundProperty, Brush(0, 0, 128))); // Navy Blue
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.ForegroundProperty, Brushes.Black));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.BorderBrushProperty, Brush(40, 50, 70)));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.BorderThicknessProperty, new Thickness(0, 0, 1, 1)));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.PaddingProperty, new Thickness(4)));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            
+            Resources.Add(typeof(System.Windows.Controls.Primitives.DataGridColumnHeader), headerStyle);
 
             BuildUI();
             Refresh(clashes, groups);
@@ -268,16 +283,16 @@ namespace ClashResolveAI.Dashboard
                 FontSize             = 12
             };
 
-            _groupGrid.Columns.Add(Col("Severity",        "MaxSeverity",   70));
-            _groupGrid.Columns.Add(Col("Count",           "Count",         55));
-            _groupGrid.Columns.Add(Col("Group Title",     "GroupTitle",    340));
-            _groupGrid.Columns.Add(Col("Level",           "LevelName",     100));
-            _groupGrid.Columns.Add(Col("Grid",            "GridRef",        80));
-            _groupGrid.Columns.Add(Col("Disc A",          "DisciplineA",    90));
-            _groupGrid.Columns.Add(Col("Disc B",          "DisciplineB",    90));
-            _groupGrid.Columns.Add(Col("Reason",          "GroupingReason", 140));
-            _groupGrid.Columns.Add(Col("Primary Offender","PrimaryOffender",200));
-            _groupGrid.Columns.Add(Col("Status",          "Status",         80));
+            _groupGrid.Columns.Add(Col("Severity",        "MaxSeverity",   70, _groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Count",           "Count",         55, _groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Group Title",     "GroupTitle",    340,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Level",           "LevelName",     100,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Grid",            "GridRef",        80,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Disc A",          "DisciplineA",    90,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Disc B",          "DisciplineB",    90,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Reason",          "GroupingReason", 140,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Primary Offender","PrimaryOffender",200,_groupFilters, () => _groupView?.Refresh()));
+            _groupGrid.Columns.Add(Col("Status",          "Status",         80,_groupFilters, () => _groupView?.Refresh()));
 
             var scroll = new ScrollViewer
             {
@@ -329,20 +344,20 @@ namespace ClashResolveAI.Dashboard
                 FontSize             = 11
             };
 
-            _clashGrid.Columns.Add(Col("ID",        "ClashId",     70));
-            _clashGrid.Columns.Add(Col("Sev",       "Severity",    60));
-            _clashGrid.Columns.Add(Col("Status",    "Status",      70));
-            _clashGrid.Columns.Add(Col("Type",      "ClashType",   120));
-            _clashGrid.Columns.Add(Col("Gap mm",    "GapMM",        60));
-            _clashGrid.Columns.Add(Col("Vol mm³",   "OverlapVolumeMM3", 70));
-            _clashGrid.Columns.Add(Col("Disc A",    "DisciplineA", 90));
-            _clashGrid.Columns.Add(Col("Disc B",    "DisciplineB", 90));
-            _clashGrid.Columns.Add(Col("Level",     "LevelName",   90));
-            _clashGrid.Columns.Add(Col("Grid",      "GridRef",     70));
-            _clashGrid.Columns.Add(Col("Moving",    "MovingDiscipline", 90));
-            _clashGrid.Columns.Add(Col("Priority",  "Priority",    70));
-            _clashGrid.Columns.Add(Col("Rule",      "RuleApplied", 120));
-            _clashGrid.Columns.Add(Col("Location",  "LocationText",200));
+            _clashGrid.Columns.Add(Col("ID",        "ClashId",     70, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Sev",       "Severity",    60, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Status",    "Status",      70, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Type",      "ClashType",   120,_clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Gap mm",    "GapMM",        60, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Vol mm³",   "OverlapVolumeMM3", 70,_clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Disc A",    "DisciplineA", 90, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Disc B",    "DisciplineB", 90, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Level",     "LevelName",   90, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Grid",      "GridRef",     70, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Moving",    "MovingDiscipline", 90,_clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Priority",  "Priority",    70, _clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Rule",      "RuleApplied", 120,_clashFilters, () => _clashView?.Refresh()));
+            _clashGrid.Columns.Add(Col("Location",  "LocationText",200,_clashFilters, () => _clashView?.Refresh()));
 
             return new TabItem
             {
@@ -418,10 +433,33 @@ namespace ClashResolveAI.Dashboard
                                            stats.CoordinationHealthScore >= 40 ? AccentYel : AccentRed;
 
                 // Update group grid
-                _groupGrid.ItemsSource = groups;
+                _groupView = System.Windows.Data.CollectionViewSource.GetDefaultView(groups);
+                _groupView.Filter = (obj) => {
+                    if (!(obj is ClashGroup g)) return false;
+                    foreach (var kv in _groupFilters) {
+                        if (string.IsNullOrWhiteSpace(kv.Value)) continue;
+                        var prop = g.GetType().GetProperty(kv.Key);
+                        var val  = prop?.GetValue(g)?.ToString() ?? "";
+                        if (!val.Contains(kv.Value)) return false;
+                    }
+                    return true;
+                };
+                _groupGrid.ItemsSource = _groupView;
 
                 // Update clash grid (most recent 500)
-                _clashGrid.ItemsSource = clashes.Skip(Math.Max(0, clashes.Count - 500)).ToList();
+                var recentClashes = clashes.Skip(Math.Max(0, clashes.Count - 500)).ToList();
+                _clashView = System.Windows.Data.CollectionViewSource.GetDefaultView(recentClashes);
+                _clashView.Filter = (obj) => {
+                    if (!(obj is ClashResult c)) return false;
+                    foreach (var kv in _clashFilters) {
+                        if (string.IsNullOrWhiteSpace(kv.Value)) continue;
+                        var prop = c.GetType().GetProperty(kv.Key);
+                        var val  = prop?.GetValue(c)?.ToString() ?? "";
+                        if (!val.Contains(kv.Value)) return false;
+                    }
+                    return true;
+                };
+                _clashGrid.ItemsSource = _clashView;
 
                 // Update discipline matrix
                 RefreshMatrix(stats.DisciplineMatrix);
@@ -660,13 +698,41 @@ namespace ClashResolveAI.Dashboard
             return btn;
         }
 
-        private static DataGridTextColumn Col(string header, string binding, double width) =>
-            new DataGridTextColumn
+        private static DataGridTextColumn Col(string header, string binding, double width, 
+            Dictionary<string, string> filters, Action onFilterChanged)
+        {
+            var col = new DataGridTextColumn
             {
-                Header  = header,
                 Binding = new System.Windows.Data.Binding(binding),
-                Width   = width
+                Width   = width,
+                CanUserSort = true
             };
+
+            var stack = new StackPanel { Orientation = Orientation.Vertical, Margin = new Thickness(0,2,0,2) };
+            stack.Children.Add(new TextBlock { 
+                Text = header, 
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.Black,
+                HorizontalAlignment = HorizontalAlignment.Center 
+            });
+
+            var filterBox = new TextBox { 
+                Margin = new Thickness(4, 4, 4, 2), 
+                Height = 18, 
+                FontSize = 9,
+                Background = Brushes.White,
+                Foreground = Brushes.Black,
+                BorderThickness = new Thickness(1)
+            };
+            filterBox.TextChanged += (s, e) => {
+                filters[binding] = filterBox.Text;
+                onFilterChanged();
+            };
+            stack.Children.Add(filterBox);
+
+            col.Header = stack;
+            return col;
+        }
 
         private static WpfBrush Brush(byte r, byte g, byte b) =>
             new WpfBrush(WpfColor.FromRgb(r, g, b));

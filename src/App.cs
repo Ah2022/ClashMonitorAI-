@@ -19,7 +19,7 @@ namespace ClashResolveAI
             try
             {
                 // ── 1. Register Clash Radar placement blocker (v5.1) ──────
-                ClashFailures.Register();
+                // ClashFailures.Register();
                 // ClashPlacementUpdater.Register(app.ActiveAddInId); // Moved to LiveMonitorService.Start()
 
                 const string tab = "MEP AI Tools";

@@ -55,7 +55,7 @@ namespace ClashResolveAI.LiveMonitor
             _addInId = app.ActiveAddInId;
 
             // ── 1. Register Placement Blocker (v5.1 update) ───────────
-            try { ClashPlacementUpdater.Register(_addInId); } catch { }
+            // try { ClashPlacementUpdater.Register(_addInId); } catch { }
 
             // ── 2. Initialise components ───────────────────────────────
             _alert    = new AlertSystem();
